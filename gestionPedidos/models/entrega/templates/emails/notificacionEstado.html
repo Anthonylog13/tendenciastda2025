@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Actualización de Pedido</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+    }
+
+    table {
+      border-spacing: 0;
+    }
+
+    .email-wrapper {
+      width: 100%;
+      background-color: #f5f7fa;
+      padding: 20px 0;
+    }
+
+    .email-content {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    .header {
+      background-color: #e0e7ff;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .header img {
+      width: 60px;
+      height: 60px;
+    }
+
+    .body {
+      padding: 30px;
+    }
+
+    .title {
+      font-size: 22px;
+      color: #3f51b5;
+      font-weight: bold;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    table.details {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 25px;
+    }
+
+    table.details td {
+      padding: 12px 10px;
+      font-size: 15px;
+      border-bottom: 1px solid #e6e6e6;
+      vertical-align: top;
+    }
+
+    table.details td:first-child {
+      font-weight: bold;
+      color: #555;
+      width: 45%;
+    }
+
+    .footer {
+      font-size: 14px;
+      color: #888;
+      text-align: center;
+      padding: 20px;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .body {
+        padding: 20px;
+      }
+
+      .title {
+        font-size: 20px;
+      }
+
+      table.details td {
+        font-size: 14px;
+        padding: 10px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="email-content">
+      <div class="header">
+        <img src="https://cdn-icons-png.flaticon.com/512/4829/4829979.png" alt="Pedido">
+      </div>
+      <div class="body">
+        <div class="title">Actualización de tu pedido</div>
+
+        <h3>Información del Cliente</h3>
+        <table class="details">
+          <tr>
+            <td>Nombre:</td>
+            <td>{{ cliente.nombre }}</td>
+          </tr>
+          <tr>
+            <td>Email:</td>
+            <td>{{ cliente.email }}</td>
+          </tr>
+          <tr>
+            <td>Teléfono:</td>
+            <td>{{ cliente.telefono }}</td>
+          </tr>
+        </table>
+
+        <h3>Detalles del Pedido</h3>
+        <table class="details">
+          <tr>
+            <td>Estado actualizado:</td>
+            <td>{{ estado }}</td>
+          </tr>
+          <tr>
+            <td>Fecha del pedido:</td>
+            <td>{{ fecha_pedido }}</td>
+          </tr>
+          <tr>
+            <td>Dirección de envío:</td>
+            <td>{{ direccion }}</td>
+          </tr>
+          <tr>
+            <td>Monto total:</td>
+            <td>${{ monto_total }}</td>
+          </tr>
+        </table>
+
+        <div class="footer">Gracias por tu compra 💙</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

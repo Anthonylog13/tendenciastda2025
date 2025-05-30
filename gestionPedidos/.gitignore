@@ -1,0 +1,32 @@
+# Archivos de Python
+*.pyc
+*.pyo
+__pycache__/
+
+# Configuración de entornos virtuales
+venv/
+env/
+.venv/
+
+
+# Archivos de base de datos
+db.sqlite3
+*.sqlite3
+
+# Configuración de Django
+*.log
+*.pot
+*.pyc
+*.pyo
+*.swp
+*.swo
+
+# Archivos estáticos y de caché
+staticfiles/
+media/
+*.sass-cache
+
+# Configuración de IDEs y sistemas operativos
+.vscode/
+.idea/
+.DS_Store
