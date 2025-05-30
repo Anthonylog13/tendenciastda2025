@@ -1,0 +1,14 @@
+{
+    "builds" : [
+        {
+            "src": "gestionPedidos/gestionPedidos/wsgi.py",
+            "use": "@vercel/python"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "gestionPedidos/gestionPedidos/wsgi.p"
+        }
+    ]
+}
