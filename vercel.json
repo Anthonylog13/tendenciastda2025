@@ -8,7 +8,7 @@
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "gestionPedidos/gestionPedidos/wsgi.p"
+            "dest": "gestionPedidos/gestionPedidos/wsgi.py"
         }
     ]
 }
