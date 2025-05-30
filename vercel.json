@@ -1,14 +1,19 @@
 {
-    "builds" : [
-        {
-            "src": "gestionPedidos/gestionPedidos/wsgi.py",
-            "use": "@vercel/python"
-        }
-    ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "gestionPedidos/gestionPedidos/wsgi.py"
-        }
-    ]
+  "version": 2,  
+  "builds": [
+    {
+      "src": "gestionPedidos/gestionPedidos/wsgi.py", 
+      "use": "@vercel/python",
+      "config": {
+        "runtime": "python3.11",  
+        "maxLambdaSize": "15mb"  
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "gestionPedidos/gestionPedidos/wsgi.py"
+    }
+  ]
 }
