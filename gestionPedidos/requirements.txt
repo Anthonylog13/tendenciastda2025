@@ -11,4 +11,5 @@ pytest==7.4.0
 pytest-django==4.5.2
 xhtml2pdf
 drf_yasg
+whiteNoise
 
