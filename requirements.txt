@@ -12,4 +12,5 @@ pytest-django==4.5.2
 xhtml2pdf
 drf_yasg
 whiteNoise
+gunicorn
 
