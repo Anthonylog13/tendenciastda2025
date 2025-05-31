@@ -13,5 +13,7 @@ xhtml2pdf
 drf_yasg
 whiteNoise
 gunicorn
-
+bootstrap
+bootstrap-icons
+react-bootstrap
 
