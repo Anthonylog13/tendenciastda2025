@@ -17,6 +17,38 @@ import sys
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+# BASE_DIR ya está definido más abajo, pero podemos usarlo aquí si lo movemos o redefinimos temporalmente para diagnóstico
+CURRENT_FILE_PATH = Path(__file__).resolve()
+PROJECT_CONFIG_DIR = CURRENT_FILE_PATH.parent
+BASE_DIR_DIAGNOSIS = PROJECT_CONFIG_DIR.parent # Esto debería ser tu TENDENCIASTDA2025/gestionPedidos/
+
+print("--- DIAGNOSTICO DE RUTAS EN VERCEL ---")
+print(f"Python version: {sys.version}")
+print(f"sys.path: {sys.path}")
+print(f"BASE_DIR (calculado para diagnóstico): {BASE_DIR_DIAGNOSIS}")
+print(f"Contenido de BASE_DIR ({BASE_DIR_DIAGNOSIS}): {os.listdir(BASE_DIR_DIAGNOSIS) if BASE_DIR_DIAGNOSIS.exists() else 'NO EXISTE O NO SE PUEDE ACCEDER'}")
+
+models_path = BASE_DIR_DIAGNOSIS / 'models'
+print(f"Ruta de la carpeta 'models': {models_path}")
+print(f"¿Existe la carpeta 'models'? {models_path.exists()}")
+
+if models_path.exists():
+    print(f"Contenido de la carpeta 'models' ({models_path}): {os.listdir(models_path)}")
+    init_py_in_models_path = models_path / '__init__.py'
+    print(f"Ruta de 'models/__init__.py': {init_py_in_models_path}")
+    print(f"¿Existe 'models/__init__.py'? {init_py_in_models_path.exists()}")
+
+    # Chequea una sub-app, por ejemplo 'pedido'
+    pedido_app_path = models_path / 'pedido'
+    print(f"Ruta de la app 'models/pedido': {pedido_app_path}")
+    print(f"¿Existe la carpeta 'models/pedido'? {pedido_app_path.exists()}")
+    if pedido_app_path.exists():
+        init_py_in_pedido_path = pedido_app_path / '__init__.py'
+        print(f"Ruta de 'models/pedido/__init__.py': {init_py_in_pedido_path}")
+        print(f"¿Existe 'models/pedido/__init__.py'? {init_py_in_pedido_path.exists()}")
+print("--- FIN DIAGNOSTICO ---")
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -41,11 +73,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
-    'models.pedido',
-    'models.producto',
-    'models.itemPedido',
-    'models.entrega',
-    'models.perfil'
+    'models.pedido',      
+    'models.producto',     
+    'models.itemPedido',   
+    'models.entrega',     
+    'models.perfil' 
 ]
 
 
