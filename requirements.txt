@@ -14,3 +14,4 @@ drf_yasg
 whiteNoise
 gunicorn
 
+
