@@ -8,6 +8,8 @@ import {
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { CarritoProvider } from "./context/CarritoContext";
 import { ProductosProvider } from "./context/ProductosContext";
+import { PedidosProvider } from "./context/PedidosContext";
+import { EntregasProvider } from "./context/EntregasContext";
 
 import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
@@ -16,6 +18,7 @@ import Entregas from "./pages/Entregas";
 import Productos from "./pages/Productos";
 import CarritoPage from "./pages/CarritoPage";
 import GestionProductos from "./pages/GestionProductos";
+import Perfiles from "./pages/Perfiles";
 
 const PrivateRoute = ({ children }) => {
   const { user } = useAuth();
@@ -79,6 +82,14 @@ const AuthGate = () => {
               </PrivateRoute>
             }
           />
+          <Route
+            path="/perfiles"
+            element={
+              <PrivateRoute>
+                <Perfiles />
+              </PrivateRoute>
+            }
+          />
           <Route path="*" element={<Navigate to="/productos" />} />
         </Routes>
       </div>
@@ -91,9 +102,13 @@ function App() {
     <AuthProvider>
       <ProductosProvider>
         <CarritoProvider>
-          <Router>
-            <AuthGate />
-          </Router>
+          <PedidosProvider>
+            <EntregasProvider>
+              <Router>
+                <AuthGate />
+              </Router>
+            </EntregasProvider>
+          </PedidosProvider>
         </CarritoProvider>
       </ProductosProvider>
     </AuthProvider>

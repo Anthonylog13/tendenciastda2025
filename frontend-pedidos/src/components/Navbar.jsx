@@ -13,6 +13,7 @@ const Navbar = () => {
     navigate("/login");
   };
 
+
   const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
 
   return (
@@ -37,41 +38,63 @@ const Navbar = () => {
           {user ? (
             <>
               <ul className="navbar-nav me-auto">
+                {/* Todos los usuarios pueden ver pedidos */}
                 <li className="nav-item">
                   <Link className="nav-link" to="/pedidos">
                     Pedidos
                   </Link>
                 </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/entregas">
-                    Entregas
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/gestion-productos">
-                    Productos
-                  </Link>
-                </li>
-              </ul>
-              <Link
-                className="nav-link position-relative me-3"
-                to="/carrito"
-                aria-label="Carrito de compras"
-                style={{ color: "white" }}
-              >
-                <i className="bi bi-cart" style={{ fontSize: "1.5rem" }}></i>
-                {totalItems > 0 && (
-                  <span
-                    className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light text-dark"
-                    style={{ fontSize: "0.75rem" }}
-                  >
-                    {totalItems}
-                    <span className="visually-hidden">
-                      artículos en carrito
-                    </span>
-                  </span>
+
+                {/* Solo admin y repartidor pueden ver entregas */}
+                {(user.rol === 'admin' || user.rol === 'repartidor') && (
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/entregas">
+                      Entregas
+                    </Link>
+                  </li>
                 )}
-              </Link>
+
+                {/* Solo admin puede gestionar productos */}
+                {user.rol === 'admin' && (
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/gestion-productos">
+                      Productos
+                    </Link>
+                  </li>
+                )}
+
+                {/* Solo admin puede ver perfiles */}
+                {user.rol === 'admin' && (
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/perfiles">
+                      Perfiles
+                    </Link>
+                  </li>
+                )}
+              </ul>
+
+              {/* Solo clientes pueden ver el carrito */}
+              {user.rol === 'cliente' && (
+                <Link
+                  className="nav-link position-relative me-3"
+                  to="/carrito"
+                  aria-label="Carrito de compras"
+                  style={{ color: "white" }}
+                >
+                  <i className="bi bi-cart" style={{ fontSize: "1.5rem" }}></i>
+                  {totalItems > 0 && (
+                    <span
+                      className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light text-dark"
+                      style={{ fontSize: "0.75rem" }}
+                    >
+                      {totalItems}
+                      <span className="visually-hidden">
+                        artículos en carrito
+                      </span>
+                    </span>
+                  )}
+                </Link>
+              )}
 
               <span className="navbar-text me-3">{user.username}</span>
               <button

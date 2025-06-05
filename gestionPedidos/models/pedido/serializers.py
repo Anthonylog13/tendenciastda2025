@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 class PedidoSerializer(serializers.ModelSerializer):
     items = ItemPedidoSerializer(many=True, read_only=True)
-    cliente_detalle = PerfilUsuarioSerializer(read_only=True, source='cliente.profile')
+    cliente_detalle = PerfilUsuarioSerializer(read_only=True, source='cliente.perfil')
     cliente = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
