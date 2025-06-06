@@ -1,0 +1,70 @@
+# ############################################################################
+# ## Archivo .gitignore para Proyectos de Node.js / JavaScript / TypeScript ##
+# ############################################################################
+#
+# Los comentarios empiezan con #. Las líneas en blanco se ignoran.
+#
+# La regla más importante: ignorar la carpeta de dependencias de Node.
+# Se puede regenerar en cualquier momento ejecutando "npm install".
+/node_modules
+
+node_modules
+
+
+# # Archivos de Build y Distribución
+# Carpetas y archivos generados al compilar o empaquetar el proyecto.
+/build
+/dist
+/.out
+
+
+# # Logs
+# Archivos de registro que se generan durante la ejecución o depuración.
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+# # Variables de Entorno
+# ¡MUY IMPORTANTE! Nunca subas archivos .env a un repositorio público.
+# Contienen secretos, contraseñas y API Keys.
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+
+# Es una buena práctica subir un archivo de ejemplo para que otros
+# sepan qué variables se necesitan. La exclamación (!) anula la regla de ignorar.
+!.env.example
+!.env.template
+
+
+# # Carpetas de Configuración de Editores de Código e IDEs
+# Para evitar conflictos de configuración personal entre desarrolladores.
+.vscode/
+.idea/
+.sublimetext/
+*.swp
+
+
+# # Archivos Específicos del Sistema Operativo
+# Archivos de sistema molestos que no deben estar en el repositorio.
+.DS_Store          # macOS
+Thumbs.db          # Windows
+ehthumbs.db        # Windows
+
+
+# # Reportes y Cachés de Herramientas
+# Archivos temporales o reportes de herramientas de desarrollo.
+/coverage          # Reportes de cobertura de tests (Jest, nyc)
+.nyc_output        # Cache de nyc
+.eslintcache       # Cache de ESLint
+
+
+# # Dependencias de otros gestores de paquetes (opcional)
+# Si en algún momento usas otros, es bueno tenerlos aquí.
+/
