@@ -67,4 +67,23 @@ ehthumbs.db        # Windows
 
 # # Dependencias de otros gestores de paquetes (opcional)
 # Si en algún momento usas otros, es bueno tenerlos aquí.
-/
+
+
+# ####################
+# ## Archivos de Python y Django
+# ####################
+
+# Ignorar la base de datos de desarrollo SQLite
+*.sqlite3
+
+# Ignorar las carpetas de caché de Python
+__pycache__/
+
+# Ignorar archivos de caché de Python compilado
+*.pyc
+
+
+# ####################
+# ## Entornos Virtuales (ya deberías tenerlo)
+# ####################
+.venv/
