@@ -3,8 +3,37 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework.validators import UniqueValidator
 from .models import PerfilUsuario
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 User = get_user_model()
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """
+    Serializer personalizado para obtener tokens JWT.
+    Añade el rol del usuario al payload del token.
+    """
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Añadir el rol del usuario al token
+        try:
+            if hasattr(user, 'perfil'):
+                token['rol'] = user.perfil.rol
+            else:
+                # Intentar crear un perfil para el usuario si no existe
+                from .models import PerfilUsuario
+                perfil = PerfilUsuario.objects.create(
+                    usuario=user,
+                    rol='cliente'  # Asignar rol de cliente por defecto
+                )
+                token['rol'] = perfil.rol
+        except Exception as e:
+            # En caso de error, no añadir el rol al token
+            print(f"Error al obtener o crear perfil para el usuario {user.username}: {e}")
+
+        return token
 
 
 class RegistroSerializer(serializers.ModelSerializer):
@@ -21,11 +50,11 @@ class RegistroSerializer(serializers.ModelSerializer):
         validators=[UniqueValidator(queryset=User.objects.all(), message="Ya existe un usuario con este correo electrónico.")]
     )
 
-    telefono = serializers.CharField(max_length=20, required=False, allow_blank=True) 
-    direccion = serializers.CharField(style={'base_template': 'textarea.html'}, required=False, allow_blank=True) 
+    telefono = serializers.CharField(max_length=20, required=False, allow_blank=True)
+    direccion = serializers.CharField(style={'base_template': 'textarea.html'}, required=False, allow_blank=True)
     class Meta:
-        model = User 
-        fields = ('username', 'password', 'email', 'telefono', 'direccion', 'id') 
+        model = User
+        fields = ('username', 'password', 'email', 'telefono', 'direccion', 'id')
 
     def create(self, validated_data):
         """
@@ -36,7 +65,7 @@ class RegistroSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
         user = User.objects.create(
             username=validated_data['username'],
-            email=validated_data.get('email', '') 
+            email=validated_data.get('email', '')
         )
 
         user.set_password(password)
@@ -44,8 +73,8 @@ class RegistroSerializer(serializers.ModelSerializer):
 
         perfil = PerfilUsuario.objects.create(
             usuario=user,
-            rol='cliente', 
-            telefono=telefono, 
+            rol='cliente',
+            telefono=telefono,
             direccion=direccion
         )
 
@@ -68,5 +97,3 @@ class PerfilUsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = PerfilUsuario
         fields = ['id', 'usuario_id', 'username', 'email', 'rol', 'telefono', 'direccion']
-
-

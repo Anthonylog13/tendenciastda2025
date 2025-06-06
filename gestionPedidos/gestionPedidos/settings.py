@@ -17,6 +17,13 @@ import sys
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+# BASE_DIR ya está definido más abajo, pero podemos usarlo aquí si lo movemos o redefinimos temporalmente para diagnóstico
+CURRENT_FILE_PATH = Path(__file__).resolve()
+PROJECT_CONFIG_DIR = CURRENT_FILE_PATH.parent
+BASE_DIR_DIAGNOSIS = PROJECT_CONFIG_DIR.parent # Esto debería ser tu TENDENCIASTDA2025/gestionPedidos/
+
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -26,7 +33,16 @@ SECRET_KEY = 'django-insecure-+c_)5*z%*0qgv_nrq0yku67-bty$j7$ks)zeqdbak!q#*0-8_4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ["*"]
+
+# CORS settings
+CORS_ALLOW_ALL_ORIGINS = False  # More secure for production
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    'https://frontend-pedidos.fly.dev',
+    'https://backend-pedidos.fly.dev' # React default port
+]
 
 
 # Application definition
@@ -41,6 +57,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
+    'corsheaders',
     'models.pedido',
     'models.producto',
     'models.itemPedido',
@@ -51,7 +68,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', 
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -72,7 +90,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated', 
+        'rest_framework.permissions.IsAuthenticated',
     ]
 }
 
@@ -131,7 +149,7 @@ DATABASES = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com' 
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'pedidosg97@gmail.com'
@@ -180,3 +198,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://backend-pedidos.fly.dev'
+]

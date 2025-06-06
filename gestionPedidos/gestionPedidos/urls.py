@@ -7,13 +7,12 @@ from models.itemPedido.views import ItemPedidoViewSet
 from models.perfil.views import PerfilUsuarioViewSet
 from models.producto.views import ProductoViewSet
 from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
     TokenRefreshView,
 )
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
-from models.perfil.views import RegistroAPIView
+from models.perfil.views import RegistroAPIView, CustomTokenObtainPairView
 
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -42,7 +41,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/registro/', RegistroAPIView.as_view(), name='registro_usuario'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui' ),
