@@ -1,30 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProductos } from '../context/ProductosContext';
-import { Container, Table, Button, Form, Modal } from 'react-bootstrap';
+import { Container, Table, Button, Form, Modal, Alert, Spinner } from 'react-bootstrap';
 
 const GestionProductos = () => {
-  const { productos, agregarProducto, editarProducto, eliminarProducto } = useProductos();
+  const { productos, loading, error, obtenerProductos, agregarProducto, editarProducto, eliminarProducto } = useProductos();
 
   const [showModal, setShowModal] = useState(false);
   const [modoEdicion, setModoEdicion] = useState(false);
   const [productoForm, setProductoForm] = useState({ nombre: '', descripcion: '', precio: '', stock: '' });
   const [editId, setEditId] = useState(null);
+  const [formError, setFormError] = useState('');
+  const [formSubmitting, setFormSubmitting] = useState(false);
+
+  // Cargar productos al iniciar
+  useEffect(() => {
+    obtenerProductos();
+  }, []);
 
   const abrirModalParaNuevo = () => {
     setModoEdicion(false);
     setProductoForm({ nombre: '', descripcion: '', precio: '', stock: '' });
+    setFormError('');
     setShowModal(true);
   };
 
   const abrirModalParaEditar = (producto) => {
     setModoEdicion(true);
-    setProductoForm({ 
-      nombre: producto.nombre, 
-      descripcion: producto.descripcion, 
-      precio: producto.precio, 
-      stock: producto.stock 
+    setProductoForm({
+      nombre: producto.nombre,
+      descripcion: producto.descripcion,
+      precio: producto.precio,
+      stock: producto.stock
     });
-    setEditId(producto._id);
+    setEditId(producto.id);
+    setFormError('');
     setShowModal(true);
   };
 
@@ -35,8 +44,11 @@ const GestionProductos = () => {
     setProductoForm(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError('');
+    setFormSubmitting(true);
+
     const precioNum = parseFloat(productoForm.precio);
     const stockNum = parseInt(productoForm.stock, 10);
 
@@ -46,75 +58,115 @@ const GestionProductos = () => {
       isNaN(precioNum) ||
       isNaN(stockNum)
     ) {
-      alert('Por favor, ingresa todos los campos correctamente.');
+      setFormError('Por favor, ingresa todos los campos correctamente.');
+      setFormSubmitting(false);
       return;
     }
 
+    const productoData = {
+      nombre: productoForm.nombre,
+      descripcion: productoForm.descripcion,
+      precio: precioNum,
+      stock: stockNum
+    };
+
+    let success;
     if (modoEdicion) {
-      editarProducto(editId, { 
-        nombre: productoForm.nombre, 
-        descripcion: productoForm.descripcion,
-        precio: precioNum, 
-        stock: stockNum 
-      });
+      success = await editarProducto(editId, productoData);
     } else {
-      agregarProducto({ 
-        nombre: productoForm.nombre, 
-        descripcion: productoForm.descripcion,
-        precio: precioNum, 
-        stock: stockNum 
-      });
+      success = await agregarProducto(productoData);
     }
-    cerrarModal();
+
+    setFormSubmitting(false);
+    if (success) {
+      cerrarModal();
+    } else {
+      setFormError('Error al guardar el producto. Intente nuevamente.');
+    }
   };
 
   return (
     <Container className="mt-4">
       <h2>Gestión de Productos</h2><br/>
 
-      <Table bordered hover>
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Precio</th>
-            <th>Stock</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {productos.map(prod => (
-            <tr key={prod._id}>
-              <td>{prod.nombre}</td>
-              <td>{prod.descripcion}</td>
-              <td>${prod.precio}</td>
-              <td>{prod.stock}</td>
-              <td>
-                <Button variant="warning" size="sm" onClick={() => abrirModalParaEditar(prod)}>
-                  Editar
-                </Button>{' '}
-                <Button variant="danger" size="sm" onClick={() => eliminarProducto(prod._id)}>
-                  Eliminar
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      {error && <Alert variant="danger">{error}</Alert>}
 
-      {/* Contenedor para botón a la derecha debajo de la tabla */}
-      <div className="d-flex justify-content-end mb-3">
-        <Button variant="dark" onClick={abrirModalParaNuevo}>
-          Nuevo Producto
-        </Button>
-      </div>
+      {loading && !showModal ? (
+        <div className="text-center my-5">
+          <Spinner animation="border" role="status" variant="primary">
+            <span className="visually-hidden">Cargando...</span>
+          </Spinner>
+          <p className="mt-2">Cargando productos...</p>
+        </div>
+      ) : (
+        <>
+          <Table bordered hover>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {productos.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="text-center">No hay productos disponibles</td>
+                </tr>
+              ) : (
+                productos.map(prod => (
+                  <tr key={prod.id}>
+                    <td>{prod.nombre}</td>
+                    <td>{prod.descripcion}</td>
+                    <td>${parseFloat(prod.precio).toFixed(2)}</td>
+                    <td>{prod.stock}</td>
+                    <td>
+                      <Button
+                        variant="warning"
+                        size="sm"
+                        onClick={() => abrirModalParaEditar(prod)}
+                        disabled={loading}
+                      >
+                        Editar
+                      </Button>{' '}
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => {
+                          if (window.confirm('¿Seguro que quieres eliminar este producto?')) {
+                            eliminarProducto(prod.id);
+                          }
+                        }}
+                        disabled={loading}
+                      >
+                        Eliminar
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </Table>
 
-      <Modal show={showModal} onHide={cerrarModal}>
-        <Modal.Header closeButton>
+          {/* Contenedor para botón a la derecha debajo de la tabla */}
+          <div className="d-flex justify-content-end mb-3">
+            <Button variant="dark" onClick={abrirModalParaNuevo} disabled={loading}>
+              Nuevo Producto
+            </Button>
+          </div>
+        </>
+      )}
+
+      <Modal show={showModal} onHide={cerrarModal} backdrop="static" keyboard={!formSubmitting}>
+        <Modal.Header closeButton={!formSubmitting}>
           <Modal.Title>{modoEdicion ? 'Editar Producto' : 'Nuevo Producto'}</Modal.Title>
         </Modal.Header>
         <Form onSubmit={handleSubmit}>
           <Modal.Body>
+            {formError && <Alert variant="danger">{formError}</Alert>}
+
             <Form.Group className="mb-3" controlId="nombre">
               <Form.Label>Nombre</Form.Label>
               <Form.Control
@@ -122,6 +174,7 @@ const GestionProductos = () => {
                 name="nombre"
                 value={productoForm.nombre}
                 onChange={handleChange}
+                disabled={formSubmitting}
                 autoFocus
               />
             </Form.Group>
@@ -133,6 +186,7 @@ const GestionProductos = () => {
                 name="descripcion"
                 value={productoForm.descripcion}
                 onChange={handleChange}
+                disabled={formSubmitting}
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="precio">
@@ -144,6 +198,7 @@ const GestionProductos = () => {
                 onChange={handleChange}
                 step="0.01"
                 min="0"
+                disabled={formSubmitting}
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="stock">
@@ -154,15 +209,23 @@ const GestionProductos = () => {
                 value={productoForm.stock}
                 onChange={handleChange}
                 min="0"
+                disabled={formSubmitting}
               />
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={cerrarModal}>
+            <Button variant="secondary" onClick={cerrarModal} disabled={formSubmitting}>
               Cancelar
             </Button>
-            <Button variant="primary" type="submit">
-              {modoEdicion ? 'Guardar Cambios' : 'Agregar'}
+            <Button variant="primary" type="submit" disabled={formSubmitting}>
+              {formSubmitting ? (
+                <>
+                  <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                  <span className="ms-2">Guardando...</span>
+                </>
+              ) : (
+                modoEdicion ? 'Guardar Cambios' : 'Agregar'
+              )}
             </Button>
           </Modal.Footer>
         </Form>

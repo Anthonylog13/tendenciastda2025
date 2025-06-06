@@ -22,31 +22,6 @@ CURRENT_FILE_PATH = Path(__file__).resolve()
 PROJECT_CONFIG_DIR = CURRENT_FILE_PATH.parent
 BASE_DIR_DIAGNOSIS = PROJECT_CONFIG_DIR.parent # Esto debería ser tu TENDENCIASTDA2025/gestionPedidos/
 
-print("--- DIAGNOSTICO DE RUTAS EN VERCEL ---")
-print(f"Python version: {sys.version}")
-print(f"sys.path: {sys.path}")
-print(f"BASE_DIR (calculado para diagnóstico): {BASE_DIR_DIAGNOSIS}")
-print(f"Contenido de BASE_DIR ({BASE_DIR_DIAGNOSIS}): {os.listdir(BASE_DIR_DIAGNOSIS) if BASE_DIR_DIAGNOSIS.exists() else 'NO EXISTE O NO SE PUEDE ACCEDER'}")
-
-models_path = BASE_DIR_DIAGNOSIS / 'models'
-print(f"Ruta de la carpeta 'models': {models_path}")
-print(f"¿Existe la carpeta 'models'? {models_path.exists()}")
-
-if models_path.exists():
-    print(f"Contenido de la carpeta 'models' ({models_path}): {os.listdir(models_path)}")
-    init_py_in_models_path = models_path / '__init__.py'
-    print(f"Ruta de 'models/__init__.py': {init_py_in_models_path}")
-    print(f"¿Existe 'models/__init__.py'? {init_py_in_models_path.exists()}")
-
-    # Chequea una sub-app, por ejemplo 'pedido'
-    pedido_app_path = models_path / 'pedido'
-    print(f"Ruta de la app 'models/pedido': {pedido_app_path}")
-    print(f"¿Existe la carpeta 'models/pedido'? {pedido_app_path.exists()}")
-    if pedido_app_path.exists():
-        init_py_in_pedido_path = pedido_app_path / '__init__.py'
-        print(f"Ruta de 'models/pedido/__init__.py': {init_py_in_pedido_path}")
-        print(f"¿Existe 'models/pedido/__init__.py'? {init_py_in_pedido_path.exists()}")
-print("--- FIN DIAGNOSTICO ---")
 
 
 # Quick-start development settings - unsuitable for production
@@ -58,7 +33,16 @@ SECRET_KEY = 'django-insecure-+c_)5*z%*0qgv_nrq0yku67-bty$j7$ks)zeqdbak!q#*0-8_4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ["*"]
+
+# CORS settings
+CORS_ALLOW_ALL_ORIGINS = False  # More secure for production
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    'https://frontend-pedidos.fly.dev',
+    'https://backend-pedidos.fly.dev' # React default port
+]
 
 
 # Application definition
@@ -73,17 +57,19 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
-    'models.pedido',      
-    'models.producto',     
-    'models.itemPedido',   
-    'models.entrega',     
-    'models.perfil' 
+    'corsheaders',
+    'models.pedido',
+    'models.producto',
+    'models.itemPedido',
+    'models.entrega',
+    'models.perfil'
 ]
 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', 
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -104,7 +90,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated', 
+        'rest_framework.permissions.IsAuthenticated',
     ]
 }
 
@@ -163,7 +149,7 @@ DATABASES = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com' 
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'pedidosg97@gmail.com'
@@ -212,3 +198,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://backend-pedidos.fly.dev'
+]

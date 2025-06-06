@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login, loading } = useAuth();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({ username: '', password: '' });
@@ -13,7 +13,7 @@ const Login = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const { username, password } = form;
 
@@ -22,12 +22,17 @@ const Login = () => {
       return;
     }
 
-    const success = login({ username, password });
-    if (success) {
-      setError('');
-      navigate('/productos');
-    } else {
-      setError('Credenciales inválidas.');
+    try {
+      const success = await login({ username, password });
+      if (success) {
+        setError('');
+        navigate('/productos');
+      } else {
+        setError('Credenciales inválidas.');
+      }
+    } catch (error) {
+      console.error('Error durante el login:', error);
+      setError('Error de conexión. Intente nuevamente.');
     }
   };
 
@@ -59,8 +64,12 @@ const Login = () => {
               placeholder="Contraseña"
             />
           </div>
-          <button type="submit" className="btn btn-primary w-100">
-            Entrar
+          <button
+            type="submit"
+            className="btn btn-primary w-100"
+            disabled={loading}
+          >
+            {loading ? 'Iniciando sesión...' : 'Entrar'}
           </button>
         </form>
       </div>

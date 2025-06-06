@@ -13,3 +13,4 @@ xhtml2pdf
 drf_yasg
 whiteNoise
 gunicorn
+django-cors-headers
